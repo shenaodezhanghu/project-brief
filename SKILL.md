@@ -7,7 +7,13 @@ description: 快速恢复指定项目上下文、接续任务并维护持久化�
 
 ## 简短指令
 
-接受“初始化 / init”“继续”“保存”“节点”“查看 <ID>”“恢复 <ID>”“删除 <ID>”等自然语言指令，无需用户描述内部文件或脚本。初始化时读取 [references/initialization.md](references/initialization.md)，按步骤交互；这也是已经开发很久的项目首次接入本技能的入口。已有上下文再次初始化时保留有效记录，按增量接入处理。
+接受“初始化 / init”“继续”“维护 / 更新”“保存”“节点”“查看 <ID>”“恢复 <ID>”“删除 <ID>”等自然语言指令，无需用户描述内部文件或脚本。初始化时读取 [references/initialization.md](references/initialization.md)，按步骤交互；这也是已经开发很久的项目首次接入本技能的入口。已有上下文再次初始化时保留有效记录，按增量接入处理。
+
+“维护”用于项目发生变化后、下一次新会话恢复前同步持久化摘要：
+- `$project-brief 维护`：读取当前摘要，使用 Git 状态、相关差异和文件证据发现新增、修改及删除；只读取受影响的必要文件，更新 `PROJECT_CONTEXT.md` 和 `CURRENT_TASK.md`，删除失效事实，不执行新的开发工作。
+- `$project-brief 维护，<变更说明>`：把变更说明作为定位线索，但仍以当前文件和 Git 证据核验，不能直接把说明写成事实。
+- `$project-brief 维护并保存`：先完成上述维护，再按 [references/git-nodes.md](references/git-nodes.md) 保存新的上下文节点。普通“维护”默认不保存节点、不提交项目源码。
+- 摘要不存在时不要把维护当作初始化；说明需要先执行 `$project-brief 初始化`。完成后简要报告新增、更新、移除的摘要内容及证据。
 
 “继续”支持可选的尾随请求：
 - 只有 `$project-brief 继续`：恢复并核验当前项目上下文，向用户简要报告项目目标、当前阶段、最近完成、当前任务和下一步；不要自行选择或执行新的开发工作。
@@ -27,4 +33,4 @@ description: 快速恢复指定项目上下文、接续任务并维护持久化�
 
 完成一个工作阶段时，更新以上两个文件：只保留有效事实、明确决策、实际验证及下一步，替换失效状态。重要结论标注来源路径、符号或测试及核验日期；不复制整段会话，不存凭据。PROJECT_CONTEXT.md 保存稳定信息和模块索引，CURRENT_TASK.md 保存易变状态；多任务时明确任务 ID，不覆盖其他任务状态。摘要长度以能准确路由为准，建议稳定摘要约 600–1200 中文字，当前任务约 300–600 字；复杂细节放项目已有文档并提供路径。
 
-首次建立摘要可使用 [references/context-template.md](references/context-template.md)。初始化节点、阶段保存及用户要求查看/恢复/删除节点时，读取 [references/git-nodes.md](references/git-nodes.md)，调用 scripts/context_nodes.py。完成有实质进展的阶段后，更新摘要并保存节点；记录相关源码证据哈希，不按消息频率存档。已有节点默认不全量读取。恢复摘要不等于回退源码；范围不明先展示节点并澄清。
+首次建立摘要可使用 [references/context-template.md](references/context-template.md)。初始化节点、阶段保存及用户要求查看/恢复/删除节点时，读取 [references/git-nodes.md](references/git-nodes.md)，调用 scripts/context_nodes.py。完成有实质开发进展的阶段后，更新摘要并保存节点；纯“维护”默认只更新摘要，只有“维护并保存”才新增节点。记录相关源码证据哈希，不按消息频率存档。已有节点默认不全量读取。恢复摘要不等于回退源码；范围不明先展示节点并澄清。
