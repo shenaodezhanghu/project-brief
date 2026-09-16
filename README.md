@@ -1,6 +1,9 @@
 # Project Brief
 
-一个面向 Codex 的跨项目上下文技能。它让新窗口通过短摘要和证据索引快速恢复项目状态，并使用独立 Git 节点保存、查看、恢复和删除上下文快照。
+一个面向 Codex 的跨项目工具仓库，包含两个彼此独立的部分：
+
+- `project-brief` Skill：让新窗口通过短摘要和证据索引快速恢复项目状态，并使用独立 Git 节点保存、查看、恢复和删除上下文快照。
+- `tools/token-observer`：在本地按任务、项目和时间查看 Codex token 消耗，并显示 Codex 侧边栏中的任务名称。
 
 ## 解决的问题
 
@@ -24,7 +27,7 @@ C:\Users\<你的用户名>\.agents\skills\project-brief
 <项目根目录>\.agents\skills\project-brief
 ```
 
-将本仓库内容完整复制到上述目录。Codex 通常会自动发现技能；若未出现，重启 Codex。
+把仓库根目录中的 `SKILL.md`、`references`、`scripts` 和本 README 复制到上述目录。`tools` 是独立工具，不需要放入技能目录。Codex 通常会自动发现技能；若未出现，重启 Codex。
 
 ## 初始化项目
 
@@ -96,8 +99,13 @@ project-brief/
 │   ├── context-template.md
 │   ├── initialization.md
 │   └── git-nodes.md
-└── scripts/
-    └── context_nodes.py
+├── scripts/
+│   └── context_nodes.py
+└── tools/
+    └── token-observer/
+        ├── README.md
+        ├── server.py
+        └── static/index.html
 ```
 
 ## 设计原则
@@ -108,4 +116,14 @@ project-brief/
 - 用户本轮指令优先，历史记录不构成新的操作授权。
 - 有实质进展后才保存节点，不按消息频率制造历史噪声。
 
-Token 消耗可视化不属于本技能，应由独立的本地观察工具处理。
+## Token 可视化
+
+Token 可视化不参与 Skill 的上下文恢复，也不会增加项目摘要。它作为仓库中的独立工具维护，使用方法见 [tools/token-observer/README.md](tools/token-observer/README.md)。
+
+在任意电脑克隆仓库后进入该目录并运行：
+
+```powershell
+python server.py
+```
+
+工具会自动寻找当前用户的 Codex 数据目录。页面中的任务名称来自当地 Codex 的 `session_index.jsonl`，因此不依赖本电脑写死的名称或路径。
