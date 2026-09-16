@@ -28,7 +28,9 @@ def node_ref(name):
     return 'refs/heads/nodes/' + name
 
 def refs(location):
-    return git(location, 'for-each-ref', '--format=%(refname:strip=3) %(objectname:short) %(subject)', 'refs/heads/nodes/')
+    return git(location, 'for-each-ref', '--sort=-committerdate',
+               '--format=%(refname:strip=3) %(objectname:short) %(committerdate:iso-strict) %(subject)',
+               'refs/heads/nodes/')
 
 def save(root, location, name, message, evidence):
     ref = node_ref(name)
